@@ -26,13 +26,14 @@ class SQL {
 
     findAgeByName($name:string){
         const s = "SELECT * FROM Info WHERE name = '" + $name + "'";
-        // const select_stmt = this.db.prepare("SELECT * FROM Info WHERE name = '张三'");
         const select_stmt = this.db.prepare(s);
         
         const a = select_stmt.all();
         if(a && a.length){
+            this.trace("查找年龄成功！");
             return a[0].age;
         }
+        this.trace("查找年龄失败！");
         return -1;
     }
     
@@ -41,8 +42,11 @@ class SQL {
             const str = 'UPDATE Info SET age=@age WHERE name=@name';
             const updata_stmt = this.db.prepare(str);
             updata_stmt.run({name:$name,age:$age});
+            this.trace("修改年龄成功");
+            return true;
         }
-        return false
+        this.trace("修改年龄失败");
+        return false;
     }
 
     private hasName($name:string){
@@ -52,6 +56,11 @@ class SQL {
         const a = select_stmt.all();
         return a && a.length;
     }
+
+    private trace($msg:Object){
+        console.log("SQL============" , $msg);
+    }
+    
 }
 
 export default SQL

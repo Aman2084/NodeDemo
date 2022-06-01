@@ -1,6 +1,73 @@
-import {createServer} from "http";
-import A from "./test01";
+// import {createServer} from "http";
+// import A from "./test01";
 import SQL from "./sql";
+
+// sql
+const sql = new SQL();
+
+
+// koa
+const Koa = require('koa');
+const app = new Koa();
+
+interface ICTX{
+    body:{
+        msg: string;
+        code: number;
+        success: boolean;
+        data: Object|boolean|string;
+    };
+    request:{
+        url: string;
+    }
+}
+
+
+function getRequest($url:string){
+    const a = $url.split("?");
+    let o = new Map();
+    if(a[1]){
+        const b = a[1].split("&");
+        b.forEach(s=>{
+            const c = s.split("=");
+            o.set(c[0] , c[1])
+        })
+    }
+    let name:string
+    switch(a[0]){
+        case "/name2age":
+            name = decodeURI(o.get("name"));
+            return sql.findAgeByName(name);
+        case "/saveage":
+            name = decodeURI(o.get("name"));
+            const age = o.get("age")
+            return sql.changeAge(name , age);
+    }
+    
+    return null;
+}
+
+
+app.use(async (ctx:ICTX , next:Function) => {
+    const url = ctx.request.url;
+    const request = getRequest(url);
+
+    ctx.body = {
+        msg: 'ok',
+        code: request? 200 : 401,
+        success: true,
+        data: request ,
+    };;
+    await next();
+});
+
+app.listen(3000);
+
+console.log("服务启动，有一下两条服务器响应\n" ,
+            "1. 根据名字查年龄：http://localhost:3000/name25age?name=张三 \n",
+            "2. 修改年龄：http://localhost:3000/saveage?name=张三&age=21 \n",
+            "注：数据库中只有  张三、 李四  两条数据");
+
 
 // ts-node测试
 // const a = new A();
@@ -20,32 +87,6 @@ const server = createServer((req , res)=>{
 
 server.listen(8080 , ()=>console.log("server started 8080"));
 */
-
-// sql
-const sql = new SQL();
-
-
-// koa
-const Koa = require('koa');
-const app = new Koa();
-
-app.use(async (ctx:{body:string}) => {
-    console.log('Start====================' , ctx);
-    sql.test()
-    ctx.body = 'Hello World!';
-    console.log('====================End0');
-});
-
-app.listen(3000);
-
-interface ISTML{
-    run(val:string):void;
-    finalize():void;
-}
-
-
-
-
 
 // import Database from 'better-sqlite3';
 // const db = new Database('foobar.db', { verbose: console.log });
