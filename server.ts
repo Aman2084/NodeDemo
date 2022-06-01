@@ -64,7 +64,7 @@ app.use(async (ctx:ICTX , next:Function) => {
 app.listen(3000);
 
 console.log("服务启动，有一下两条服务器响应\n" ,
-            "1. 根据名字查年龄：http://localhost:3000/name25age?name=张三 \n",
+            "1. 根据名字查年龄：http://localhost:3000/name2age?name=张三 \n",
             "2. 修改年龄：http://localhost:3000/saveage?name=张三&age=21 \n",
             "注：数据库中只有  张三、 李四  两条数据");
 
