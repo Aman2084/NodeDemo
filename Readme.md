@@ -3,6 +3,4 @@ npm init -y
 npm i typescript @types/node -D
 npm install -D ts-node
 
-
-
-
+npm install @type/koa
